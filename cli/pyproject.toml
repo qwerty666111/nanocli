@@ -1,0 +1,28 @@
+[project]
+name = "nanocli"
+version = "0.1.0"
+description = "Python CLI for batch USDC micro-transfers on Arc Testnet"
+requires-python = ">=3.10"
+dependencies = [
+  "web3>=7.0.0",
+  "click>=8.0.0",
+  "python-dotenv>=1.0.0",
+  "rich>=13.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0.0",
+  "pytest-cov>=5.0.0",
+]
+
+[project.scripts]
+nanocli = "nanocli.cli:main"
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["nanocli*"]
