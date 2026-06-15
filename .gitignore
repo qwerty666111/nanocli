@@ -25,13 +25,16 @@ yarn-debug.log*
 yarn-error.log*
 
 # python
-cli/__pycache__/
-cli/*.py[cod]
-cli/*$py.class
-cli/*.egg-info/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
 cli/.pytest_cache/
 cli/.venv/
 cli/venv/
+
+# typescript
+*.tsbuildinfo
 
 # IDE
 .vscode/
