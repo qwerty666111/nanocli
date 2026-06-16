@@ -23,6 +23,12 @@ contracts/coverage/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+dev.out.log
+dev.err.log
+
+# dev server
+node.pid
+dev.pid
 
 # python
 **/__pycache__/
