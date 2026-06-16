@@ -1,0 +1,35 @@
+{
+  "name": "nanocli",
+  "version": "0.1.0",
+  "private": true,
+  "description": "NanoCLI — Python CLI and Next.js dashboard for batch micro-transfers on Arc Testnet.",
+  "workspaces": [
+    "contracts",
+    "frontend"
+  ],
+  "scripts": {
+    "compile": "npm run compile --workspace=contracts",
+    "test:contracts": "npm run test --workspace=contracts",
+    "test:frontend": "npm run test --workspace=frontend",
+    "test:cli": "cd cli && python -m pytest",
+    "test": "npm run test:contracts && npm run test:frontend && npm run test:cli",
+    "build": "npm run build --workspace=contracts && npm run build --workspace=frontend",
+    "lint": "npm run lint --workspace=contracts && npm run lint --workspace=frontend",
+    "typecheck": "npm run typecheck --workspace=contracts && npm run typecheck --workspace=frontend",
+    "deploy:local": "npm run deploy:local --workspace=contracts",
+    "deploy:arc": "npm run deploy:arc --workspace=contracts",
+    "node:local": "npm run node --workspace=contracts"
+  },
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.5.0"
+  },
+  "dependencies": {
+    "viem": "2.52.2",
+    "wagmi": "2.19.5"
+  }
+}
