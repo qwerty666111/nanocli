@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 
@@ -17,9 +18,24 @@ def _load_env() -> None:
 _load_env()
 
 
+def _load_deployed() -> str:
+    """Read the deployed contract address from deployed.json if it exists."""
+    current = Path(__file__).resolve()
+    for parent in [current.parent, current.parent.parent, current.parent.parent.parent]:
+        deployed_file = parent / "deployed.json"
+        if deployed_file.exists():
+            try:
+                return str(json.loads(deployed_file.read_text())["contractAddress"])
+            except (KeyError, ValueError, FileNotFoundError):
+                return ""
+    return ""
+
+
 # Environment-aware defaults
 ARC_TESTNET_RPC_URL = os.getenv("ARC_TESTNET_RPC_URL", "https://arc-testnet.drpc.org")
-BATCH_PAYMENT_CONTRACT_ADDRESS = os.getenv("BATCH_PAYMENT_CONTRACT_ADDRESS", "")
+BATCH_PAYMENT_CONTRACT_ADDRESS = os.getenv(
+    "BATCH_PAYMENT_CONTRACT_ADDRESS", _load_deployed()
+)
 PRIVATE_KEY = os.getenv("NANOCLI_PRIVATE_KEY", os.getenv("PRIVATE_KEY", ""))
 VAULT_KEY = os.getenv("NANOCLI_VAULT_KEY", "")
 
