@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "cd .. && npm run compile",
+    "prebuild": "cd .. && npm run compile",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

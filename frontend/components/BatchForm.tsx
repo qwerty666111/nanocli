@@ -12,11 +12,15 @@ import { parseEther } from "viem";
 import { batchPaymentAbi } from "@/config/abi";
 import { arcTestnet } from "@/config/wagmi";
 
-export function BatchForm() {
+interface BatchFormProps {
+  initialContractAddress?: string;
+}
+
+export function BatchForm({ initialContractAddress = "" }: BatchFormProps) {
   const { address, isConnected } = useAccount();
   const { data: balance } = useBalance({ address });
 
-  const [contractAddress, setContractAddress] = useState("");
+  const [contractAddress, setContractAddress] = useState(initialContractAddress);
   const [recipientsRaw, setRecipientsRaw] = useState("");
   const [amount, setAmount] = useState("0.05");
   const [submissionError, setSubmissionError] = useState<string | null>(null);

@@ -1,86 +1,67 @@
 # Deploy NanoCLI to Arc Testnet
 
-This guide walks through deploying the `BatchPayment` contract to Arc Testnet using your own wallet.
+This guide walks through deploying the `BatchPayment` contract to Arc Testnet **directly from the local dashboard** using your wallet.
 
 ## 1. Get a wallet and fund it
 
 1. Install a Web3 wallet (MetaMask, Rabby, etc.).
 2. Add **Arc Testnet** manually:
    - Network name: `Arc Testnet`
-   - RPC URL: `https://arc-testnet.drpc.org` (or `https://rpc.testnet.arc.network`)
+   - RPC URL: `https://arc-testnet.drpc.org`
    - Chain ID: `5042002`
    - Currency symbol: `USDC`
    - Block explorer: `https://testnet.arcscan.app`
 3. Visit the [Circle Faucet](https://faucet.circle.com/), select **Arc Testnet**, paste your wallet address and request testnet USDC.
 
-## 2. Configure environment
-
-Copy `.env.example` to `.env` and fill in your values:
+## 2. Start the local dashboard
 
 ```bash
-cp .env.example .env
-```
-
-```ini
-ARC_TESTNET_RPC_URL=https://arc-testnet.drpc.org
-PRIVATE_KEY=0x...        # Your wallet private key with 0x prefix
-```
-
-> ⚠️ Never commit `.env` or share your private key.
-
-## 3. Compile and test
-
-```bash
-npm run compile
-npm run test
-```
-
-## 4. Deploy the contract
-
-```bash
-npm run deploy:arc
-```
-
-The script will print the deployed address and a link to the explorer. Save it:
-
-```ini
-BATCH_PAYMENT_CONTRACT_ADDRESS=0x...
-```
-
-## 5. Verify the deployment
-
-1. Open the explorer link from the deployment output.
-2. Confirm the contract bytecode and deployer address match.
-3. Optionally send a test transaction using the CLI:
-
-```bash
-nanocli send-batch recipients.json \
-  --contract $BATCH_PAYMENT_CONTRACT_ADDRESS \
-  --amount 0.05 \
-  --rpc $ARC_TESTNET_RPC_URL \
-  --private-key $PRIVATE_KEY
-```
-
-## 6. Start the frontend locally
-
-```bash
+npm install
+cd cli && python -m pip install -e . && cd ..
 npm run dev --workspace=frontend
 ```
 
-Open [http://localhost:3000](http://localhost:3000), connect the same wallet, paste the deployed contract address and a recipient list, then submit the batch transfer.
+Open [http://localhost:3000](http://localhost:3000).
 
-## 7. Run the auto-refill agent
+## 3. Deploy the contract from the browser
+
+1. Click **Deploy contract** in the top-right corner.
+2. Connect the wallet you funded.
+3. Click **Deploy BatchPayment**.
+4. Confirm the transaction in your wallet.
+
+The contract address is automatically saved to `deployed.json` and used by the dashboard and CLI.
+
+## 4. Verify the deployment
+
+Open the explorer link shown on the deploy page, or check the transaction hash.
+
+## 5. Send a batch transfer
+
+From the dashboard:
+
+1. Paste up to 100 recipient addresses.
+2. Set the amount per recipient.
+3. Click **Send Batch**.
+
+Or from the CLI:
+
+```bash
+nanocli send-batch recipients.json --amount 0.05 --private-key 0x...
+```
+
+If `deployed.json` exists, the CLI will automatically use the saved contract address.
+
+## 6. Run the auto-refill agent
 
 ```bash
 nanocli agent \
-  --watch $WATCH_ADDRESS \
+  --watch 0x... \
   --min-balance 1.0 \
   --refill-amount 5.0 \
-  --vault-key $VAULT_PRIVATE_KEY \
+  --vault-key 0x... \
   --interval 60
 ```
-
-The agent will monitor the watched address and send a refill when the balance drops below the threshold.
 
 ---
 
@@ -90,7 +71,7 @@ The agent will monitor the watched address and send a refill when the balance dr
 |---|---|
 | `npm run compile` | Compile Solidity contracts |
 | `npm run test` | Run all contract, frontend, and CLI tests |
+| `npm run lint` | Run linters |
+| `npm run typecheck` | TypeScript check |
 | `npm run build` | Production build |
-| `npm run deploy:arc` | Deploy to Arc Testnet |
-| `npm run node:local` | Start a local Hardhat node |
-| `npm run deploy:local` | Deploy to a local Hardhat node |
+| `npm run dev --workspace=frontend` | Start local dashboard |

@@ -5,9 +5,11 @@
 NanoCLI is a production-ready stack for batch micro-transfers on **Arc Testnet** (Circle's stablecoin-native L1). It includes:
 
 - **Solidity batch-payment contract** (`BatchPayment.sol`) — one transaction, up to 100 recipients.
-- **Hardhat + Viem deployment pipeline** — compile, test, and deploy to Arc Testnet.
-- **Python CLI** — `send-batch`, `agent`, `balance`, and `deploy-contract` commands.
-- **Next.js dashboard** — connect a wallet, paste a recipient list, and execute batch transfers from the browser.
+- **Hardhat + Viem** — compile and test contracts.
+- **Python CLI** — `send-batch`, `agent`, `balance`, and `validate` commands.
+- **Next.js dashboard** — connect a wallet, deploy the contract once from a local page, and execute batch transfers from the browser.
+
+> **No `.env` files are required.** The contract is deployed from the browser via the connected wallet.
 
 ---
 
@@ -24,13 +26,15 @@ NanoCLI is a production-ready stack for batch micro-transfers on **Arc Testnet**
 │   └── hardhat.config.ts
 ├── frontend/           # Next.js + Tailwind + Wagmi/Viem
 │   ├── app/
+│   ├── api/            # local deployment persistence
 │   ├── components/
 │   └── config/
 ├── cli/                # Python CLI
 │   ├── nanocli/
 │   └── tests/
-├── .env.example
+├── deployed.json       # auto-created after browser deployment
 ├── README.md
+├── DEPLOY.md
 └── LICENSE
 ```
 
@@ -53,83 +57,41 @@ python -m pip install -e .
 cd ..
 ```
 
-### 2. Configure environment
-
-Copy the example file and fill in your values:
-
-```bash
-cp .env.example .env
-```
-
-Required for deployment:
-
-```ini
-ARC_TESTNET_RPC_URL=https://arc-testnet.drpc.org
-PRIVATE_KEY=0x...        # Your deployer wallet private key
-```
-
-> ⚠️ Never commit `.env` — it is already ignored by `.gitignore`.
-
-### 3. Compile contracts
+### 2. Compile and test
 
 ```bash
 npm run compile
-```
-
-### 4. Run tests
-
-```bash
 npm run test
 ```
 
-### 5. Start local stack
+### 3. Start the local dashboard
 
 ```bash
-# Terminal 1 — local Hardhat node
-npm run node:local
-
-# Terminal 2 — deploy the contract locally
-npm run deploy:local
-
-# Terminal 3 — start the frontend
 npm run dev --workspace=frontend
 ```
 
 Open [http://localhost:3000](http://localhost:3000) and connect your wallet.
 
+### 4. Deploy the contract from the browser
+
+1. Switch your wallet to **Arc Testnet** (chainId `5042002`).
+2. Click **Deploy contract** in the top right corner.
+3. Click **Deploy BatchPayment** — the contract is deployed directly from your wallet.
+4. The deployed address is automatically saved to `deployed.json` and used by the dashboard.
+
+### 5. Send a batch transfer
+
+On the main page:
+
+1. Paste up to 100 recipient addresses.
+2. Set the amount per recipient (default $0.05 USDC).
+3. Click **Send Batch**.
+
 ---
 
-## 🌐 Deploy to Arc Testnet
-
-### 1. Fund your wallet
+## 🌐 Funding the wallet
 
 Get testnet USDC from the [Circle Faucet](https://faucet.circle.com/) by selecting **Arc Testnet** and pasting your wallet address.
-
-### 2. Deploy the contract
-
-```bash
-npm run deploy:arc
-```
-
-The script prints the deployed address and a link to the explorer. Save it to your `.env`:
-
-```ini
-BATCH_PAYMENT_CONTRACT_ADDRESS=0x...
-```
-
-### 3. Use the contract
-
-From the CLI:
-
-```bash
-nanocli send-batch recipients.json \
-  --contract $BATCH_PAYMENT_CONTRACT_ADDRESS \
-  --amount 0.05 \
-  --rpc $ARC_TESTNET_RPC_URL \
-  --private-key $PRIVATE_KEY
-```
-
-Or open the frontend at `http://localhost:3000`, paste the recipient list, and submit.
 
 ---
 
@@ -145,19 +107,20 @@ python -m pip install -e .
 ### Commands
 
 ```bash
-# Send $0.05 USDC to 100 recipients in one transaction
-nanocli send-batch recipients.json --contract 0x... --amount 0.05
+# Send $0.05 USDC to 100 recipients in one transaction.
+# If deployed.json exists, --contract is optional.
+nanocli send-batch recipients.json --amount 0.05 --private-key 0x...
 
 # Run the balance monitor / auto-refill agent
 nanocli agent \
   --watch 0x... \
   --min-balance 1.0 \
   --refill-amount 5.0 \
-  --vault-key $VAULT_PRIVATE_KEY \
+  --vault-key 0x... \
   --interval 60
 
 # Check native or ERC20 balance
-nanocli balance --address 0x... --token 0x... --rpc $ARC_TESTNET_RPC_URL
+nanocli balance --address 0x... --token 0x...
 ```
 
 Recipient JSON format (`recipients.json`):
@@ -176,12 +139,10 @@ Recipient JSON format (`recipients.json`):
 | Command | What it runs |
 |---|---|
 | `npm run compile` | Hardhat contract compilation |
-| `npm run test:contracts` | Hardhat + Viem contract tests |
-| `npm run test:frontend` | Next.js + Jest component tests |
-| `npm run test:cli` | Python CLI unit tests |
+| `npm run test` | All contract, frontend, and CLI tests |
 | `npm run lint` | ESLint on frontend and contracts |
 | `npm run typecheck` | TypeScript `tsc --noEmit` |
-| `npm run build` | Production build of frontend and contracts |
+| `npm run build` | Production build |
 
 ---
 
