@@ -1,10 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import Home from "../app/page";
 
-jest.mock("next/font/google", () => ({
-  Inter: jest.fn(() => ({ className: "inter" })),
-}));
-
 jest.mock("@/components/ConnectButton", () => ({
   ConnectButton: () => <button>Connect Wallet</button>,
 }));
