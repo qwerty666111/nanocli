@@ -2,13 +2,7 @@ import { promises as fs } from "fs";
 import { NextResponse } from "next/server";
 import path from "path";
 
-const DEPLOYED_PATH = path.resolve(
-  process.cwd(),
-  "..",
-  "..",
-  "..",
-  "deployed.json"
-);
+const DEPLOYED_PATH = path.resolve(process.cwd(), "..", "deployed.json");
 
 export async function GET() {
   try {
