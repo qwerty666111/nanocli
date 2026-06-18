@@ -5,8 +5,6 @@ import path from "path";
 const ARTIFACT_PATH = path.resolve(
   process.cwd(),
   "..",
-  "..",
-  "..",
   "contracts",
   "artifacts",
   "contracts",
