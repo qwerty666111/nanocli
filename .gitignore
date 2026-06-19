@@ -54,3 +54,4 @@ Thumbs.db
 # hardhat
 contracts/hardhat.config.js
 contracts/.openzeppelin/
+.vercel
