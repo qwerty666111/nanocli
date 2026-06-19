@@ -8,6 +8,8 @@ import {
 } from "wagmi";
 import { Header } from "@/components/Header";
 import { GradientBackground } from "@/components/GradientBackground";
+import { DesktopWindow } from "@/components/DesktopWindow";
+import { Taskbar } from "@/components/Taskbar";
 import { arcTestnet } from "@/config/wagmi";
 import { Rocket, AlertCircle, CheckCircle2, Loader2, ExternalLink } from "lucide-react";
 
@@ -66,78 +68,84 @@ export default function DeployPage() {
   const onCorrectChain = chainId === arcTestnet.id;
 
   return (
-    <div className="min-h-screen text-slate-100">
+    <div className="relative min-h-screen text-blu-deep">
       <GradientBackground />
       <Header />
 
-      <main className="mx-auto max-w-3xl px-6 py-16">
-        <div className="relative overflow-hidden rounded-3xl glass-strong p-6 sm:p-10">
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-violet-500/10 blur-3xl" />
-
-          <div className="relative">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white shadow-lg shadow-violet-500/20">
-                <Rocket className="h-5 w-5" />
-              </div>
+      <main className="mx-auto max-w-3xl px-4 pb-28 pt-10 sm:px-6">
+        <DesktopWindow
+          title="C:\NANOCLI\DEPLOY.EXE"
+          status={[
+            `Net: ${arcTestnet.name}`,
+            isConnected ? "Wallet OK" : "No wallet",
+            "Local Intranet",
+          ]}
+        >
+          <div className="font-mono text-blu-deep">
+            <div className="mb-4 flex items-center gap-2 border-b-2 border-dotted border-blu-deep pb-3">
+              <span className="grid h-9 w-9 place-items-center bevel-in text-blu">
+                <Rocket className="h-4 w-4" />
+              </span>
               <div>
-                <h1 className="text-2xl font-semibold tracking-tight text-white">
-                  Deploy BatchPayment
-                </h1>
-                <p className="text-sm text-slate-400">
+                <h1 className="font-pixel text-2xl leading-none">Deploy BatchPayment</h1>
+                <p className="text-xs">
                   Deploy a new verified instance from your browser.
+                  <span className="cursor-block ml-0.5" aria-hidden="true" />
                 </p>
               </div>
             </div>
 
-            <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
+            <div className="bevel-in p-3 text-xs">
               <div className="flex items-center justify-between py-1">
-                <span className="text-slate-500">Network</span>
-                <span className="font-medium">{arcTestnet.name}</span>
+                <span className="uppercase">Network</span>
+                <span className="font-bold">{arcTestnet.name}</span>
               </div>
               <div className="flex items-center justify-between py-1">
-                <span className="text-slate-500">RPC</span>
-                <span className="font-mono">{arcTestnet.rpcUrls.default.http[0]}</span>
+                <span className="uppercase">RPC</span>
+                <span className="break-all text-right text-[11px]">
+                  {arcTestnet.rpcUrls.default.http[0]}
+                </span>
               </div>
               <div className="flex items-center justify-between py-1">
-                <span className="text-slate-500">Deployer</span>
+                <span className="uppercase">Deployer</span>
                 {address ? (
-                  <span className="font-mono">{address}</span>
+                  <span className="break-all text-right text-[11px]">{address}</span>
                 ) : (
-                  <span className="text-slate-500">Not connected</span>
+                  <span className="text-blu">Not connected</span>
                 )}
               </div>
             </div>
 
             {!isConnected && (
-              <div className="mt-6 flex items-center gap-3 rounded-xl border border-indigo-500/20 bg-indigo-500/10 px-4 py-3 text-sm text-indigo-200">
-                <AlertCircle className="h-4 w-4 shrink-0 text-indigo-400" />
+              <div className="bevel-out mt-4 flex items-center gap-2 p-3 text-xs">
+                <AlertCircle className="h-4 w-4 shrink-0 text-blu" />
                 Connect your wallet in the header to deploy.
               </div>
             )}
 
             {isConnected && !onCorrectChain && (
-              <div className="mt-6 flex items-center gap-3 rounded-xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
-                <AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
+              <div className="bevel-out mt-4 flex items-center gap-2 p-3 text-xs">
+                <AlertCircle className="h-4 w-4 shrink-0 text-blu" />
                 Switch to {arcTestnet.name} (chainId {arcTestnet.id}) in your wallet.
               </div>
             )}
 
             {loadError && (
-              <div className="mt-6 flex items-start gap-3 rounded-xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
-                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-400" />
-                {loadError}
+              <div className="bevel-out mt-4 flex items-start gap-2 p-3 text-xs">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-blu" />
+                <span className="break-words">{loadError}</span>
               </div>
             )}
 
             <button
               onClick={handleDeploy}
               disabled={!isConnected || !onCorrectChain || !artifact || isDeploying}
-              className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-500 to-fuchsia-500 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:shadow-violet-500/40 disabled:cursor-not-allowed disabled:opacity-50"
+              className="btn9 btn9-primary mt-4 w-full py-3 text-base"
             >
               {isDeploying ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Deploying...
+                  Deploying…
                 </>
               ) : (
                 <>
@@ -148,38 +156,38 @@ export default function DeployPage() {
             </button>
 
             {hash && !isSuccess && (
-              <div className="mt-4 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">
-                <Loader2 className="h-4 w-4 animate-spin text-indigo-400" />
-                <span className="font-mono">{hash}</span>
+              <div className="bevel-in mt-3 flex items-center gap-2 p-3 text-[11px]">
+                <Loader2 className="h-4 w-4 animate-spin text-blu" />
+                <span className="break-all">{hash}</span>
               </div>
             )}
 
             {isSuccess && receipt?.contractAddress && (
-              <div className="mt-4 flex items-start gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+              <div className="bevel-out mt-3 flex items-start gap-2 p-3 text-xs">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-blu" />
                 <div>
-                  <p className="font-medium">Contract deployed</p>
-                  <p className="mt-1 font-mono">{receipt.contractAddress}</p>
+                  <p className="font-bold uppercase">Contract deployed</p>
+                  <p className="mt-1 break-all text-[11px]">{receipt.contractAddress}</p>
                   <a
                     href={`${arcTestnet.blockExplorers.default.url}/address/${receipt.contractAddress}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-2 inline-flex items-center gap-1 text-emerald-300 underline underline-offset-2 transition hover:text-emerald-100"
+                    className="mt-1.5 inline-flex items-center gap-1 font-bold text-blu underline decoration-dotted underline-offset-2"
                   >
                     View on explorer
-                    <ExternalLink className="h-3.5 w-3.5" />
+                    <ExternalLink className="h-3 w-3" />
                   </a>
                   {saved && (
-                    <p className="mt-2 text-xs text-emerald-300/80">
-                      Saved to deployed.json
-                    </p>
+                    <p className="mt-1.5 text-[11px]">* Saved to deployed.json</p>
                   )}
                 </div>
               </div>
             )}
           </div>
-        </div>
+        </DesktopWindow>
       </main>
+
+      <Taskbar />
     </div>
   );
 }

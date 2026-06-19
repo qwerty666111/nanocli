@@ -9,38 +9,47 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-inter)", ...fontFamily.sans],
+        // Pixel display face is the default "sans" so headings/chrome read retro.
+        sans: ["var(--font-pixel)", ...fontFamily.sans],
+        pixel: ["var(--font-pixel)", "monospace"],
         mono: ["var(--font-mono)", ...fontFamily.mono],
       },
       colors: {
-        arc: {
-          50: "#eef8ff",
-          100: "#d8efff",
-          200: "#b8e4ff",
-          300: "#7ed3ff",
-          400: "#3bb7ff",
-          500: "#0c9cf2",
-          600: "#0083d4",
-          700: "#0168ab",
-          800: "#05568d",
-          900: "#0a4874",
-          950: "#072d4d",
+        // STRICTLY two colors: flat web-blue + white.
+        blu: {
+          DEFAULT: "#1c6fd6",
+          ink: "#0f4fa0", // darker blue for borders / shadow only (still "blue")
+          deep: "#0a3a7a",
         },
+        paper: "#ffffff",
       },
       keyframes: {
-        blob: {
-          "0%, 100%": { transform: "translate(0, 0) scale(1)" },
-          "33%": { transform: "translate(30px, -50px) scale(1.1)" },
-          "66%": { transform: "translate(-20px, 20px) scale(0.9)" },
+        // Blinking terminal cursor.
+        blink: {
+          "0%, 49%": { opacity: "1" },
+          "50%, 100%": { opacity: "0" },
         },
-        shimmer: {
-          "0%": { backgroundPosition: "-200% 0" },
-          "100%": { backgroundPosition: "200% 0" },
+        // Subtle dither shimmer — drifts the halftone texture.
+        dither: {
+          "0%": { backgroundPosition: "0 0" },
+          "100%": { backgroundPosition: "16px 16px" },
+        },
+        // Slow wallpaper cloud drift.
+        clouddrift: {
+          "0%": { backgroundPosition: "0 0, 0 0" },
+          "100%": { backgroundPosition: "240px 0, -180px 0" },
+        },
+        // Marquee for the status / agent ticker.
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
         },
       },
       animation: {
-        blob: "blob 7s infinite",
-        shimmer: "shimmer 3s linear infinite",
+        blink: "blink 1.06s steps(1) infinite",
+        dither: "dither 1.2s linear infinite",
+        clouddrift: "clouddrift 90s linear infinite",
+        marquee: "marquee 22s linear infinite",
       },
     },
   },

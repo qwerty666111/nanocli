@@ -23,32 +23,34 @@ export function ContractCard({ address }: ContractCardProps) {
   };
 
   return (
-    <div className="relative overflow-hidden rounded-2xl glass-strong p-6">
-      <div className="absolute right-0 top-0 h-32 w-32 bg-gradient-to-bl from-indigo-500/15 to-transparent" />
-      <div className="relative">
-        <div className="flex items-center gap-2 text-sm font-medium text-slate-400">
-          <ShieldCheck className="h-4 w-4 text-emerald-400" />
+    <div className="bevel-out font-mono text-blu-deep">
+      {/* mini title bar */}
+      <div className="dither-on-blue flex items-center gap-2 px-2 py-1 text-white">
+        <ShieldCheck className="h-3.5 w-3.5" />
+        <span className="font-mono text-[11px] font-bold tracking-tight">
+          SYSTEM\CONTRACT.SYS
+        </span>
+      </div>
+
+      <div className="space-y-3 p-3">
+        <div className="text-[11px] font-bold uppercase">
           Verified on ArcScan
         </div>
 
-        <div className="mt-3 font-mono text-sm text-white break-all">
-          {address || "Loading contract..."}
+        <div className="well break-all p-2 text-[11px]">
+          {address || "Loading contract…"}
         </div>
 
-        <div className="mt-4 flex items-center gap-2">
-          <button
-            onClick={copy}
-            disabled={!address}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:bg-white/10 disabled:opacity-40"
-          >
+        <div className="flex items-center gap-2">
+          <button onClick={copy} disabled={!address} className="btn9 text-[11px]">
             {copied ? (
               <>
-                <Check className="h-3.5 w-3.5 text-emerald-400" />
+                <Check className="h-3 w-3" />
                 Copied
               </>
             ) : (
               <>
-                <Copy className="h-3.5 w-3.5" />
+                <Copy className="h-3 w-3" />
                 Copy
               </>
             )}
@@ -58,9 +60,9 @@ export function ContractCard({ address }: ContractCardProps) {
             href={`${arcTestnet.blockExplorers.default.url}/address/${address}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:bg-white/10"
+            className="btn9 text-[11px]"
           >
-            <ExternalLink className="h-3.5 w-3.5" />
+            <ExternalLink className="h-3 w-3" />
             Explorer
           </a>
         </div>

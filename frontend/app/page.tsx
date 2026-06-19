@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Header } from "@/components/Header";
 import { GradientBackground } from "@/components/GradientBackground";
+import { DesktopIcons } from "@/components/DesktopIcons";
+import { DesktopWindow } from "@/components/DesktopWindow";
+import { Taskbar } from "@/components/Taskbar";
 import { ContractCard } from "@/components/ContractCard";
 import { BatchTransfer } from "@/components/BatchTransfer";
 import { Features } from "@/components/Features";
@@ -20,53 +23,70 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen text-slate-100">
+    <div className="relative min-h-screen text-blu-deep">
       <GradientBackground />
+      <DesktopIcons />
       <Header />
 
-      <main className="mx-auto max-w-6xl px-6 pb-24 pt-16">
+      <main className="mx-auto max-w-6xl px-4 pb-28 pt-8 sm:px-6">
+        {/* Hero headline — kept as a desktop "welcome" plate */}
         <div className="text-center">
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
-            <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
+            <h1 className="font-pixel text-4xl leading-none text-white drop-shadow-[2px_2px_0_var(--blu-deep)] sm:text-6xl">
               Batch payments on{" "}
-              <span className="text-gradient">Arc Testnet</span>
+              <span className="text-white underline decoration-white/70 decoration-4 underline-offset-4">
+                Arc Testnet
+              </span>
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-400">
+            <p className="mx-auto mt-4 max-w-2xl bg-white/85 px-3 py-1 font-mono text-xs text-blu-deep sm:text-sm">
               Send USDC to up to 100 recipients in a single transaction. Verified
               contract, wallet-only, no private keys ever touch the server.
             </p>
           </motion.div>
         </div>
 
+        {/* Agent ticker */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-12"
+          transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-8"
         >
           <AgentBanner />
         </motion.div>
 
+        {/* The application window */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-6 grid gap-6 lg:grid-cols-3"
+          transition={{ duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-6 grid items-start gap-5 lg:grid-cols-3"
         >
           <div className="lg:col-span-2">
-            <BatchTransfer contractAddress={contractAddress} />
+            <DesktopWindow
+              title="C:\NANOCLI\BATCH.EXE"
+              status={[
+                `Obj: ${contractAddress ? 1 : 0}`,
+                "63.2MB free",
+                "Local Intranet",
+              ]}
+            >
+              <BatchTransfer contractAddress={contractAddress} />
+            </DesktopWindow>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-5">
             <ContractCard address={contractAddress} />
             <Features />
           </div>
         </motion.div>
       </main>
+
+      <Taskbar />
     </div>
   );
 }

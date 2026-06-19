@@ -1,18 +1,41 @@
 "use client";
 
+/**
+ * Dithered "cloud" desktop wallpaper.
+ * Pure CSS, two inks only (web-blue + white): a flat blue field, soft white
+ * cloud blobs built from radial gradients, and a halftone dither overlay that
+ * slowly drifts to read as a living Y2K desktop.
+ */
 export function GradientBackground() {
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden bg-slate-950">
-      <div className="absolute -left-1/4 -top-1/4 h-[60rem] w-[60rem] rounded-full bg-indigo-600/10 blur-3xl animate-blob" />
-      <div className="absolute right-0 top-1/4 h-[50rem] w-[50rem] rounded-full bg-cyan-500/10 blur-3xl animate-blob animation-delay-2000" />
-      <div className="absolute bottom-0 left-1/3 h-[55rem] w-[55rem] rounded-full bg-violet-600/10 blur-3xl animate-blob animation-delay-4000" />
+    <div className="fixed inset-0 -z-10 overflow-hidden bg-blu">
+      {/* Cloud layer — white radial puffs drifting across the blue field. */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute inset-0 motion-safe:animate-clouddrift"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          backgroundImage: `
+            radial-gradient(closest-side, rgba(255,255,255,0.55), rgba(255,255,255,0) 70%),
+            radial-gradient(closest-side, rgba(255,255,255,0.40), rgba(255,255,255,0) 70%)
+          `,
+          backgroundRepeat: "repeat-x, repeat-x",
+          backgroundSize: "520px 320px, 380px 240px",
+          backgroundPosition: "0 22%, 120px 64%",
         }}
       />
+      {/* Halftone dither over the whole desktop (white dots on blue). */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 opacity-50 motion-safe:animate-dither"
+        style={{
+          backgroundColor: "transparent",
+          backgroundImage:
+            "radial-gradient(rgba(255,255,255,0.6) 0.7px, transparent 1px)",
+          backgroundSize: "4px 4px",
+        }}
+      />
+      {/* Faint scanlines for CRT texture. */}
+      <div aria-hidden="true" className="absolute inset-0 scanlines opacity-40" />
     </div>
   );
 }

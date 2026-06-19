@@ -5,27 +5,29 @@ import { ConnectButton } from "./ConnectButton";
 import { Balance } from "./Balance";
 import { NetworkBadge } from "./NetworkBadge";
 
+/**
+ * Top "menu strip" of the desktop — styled like an OS shell header band.
+ * Visual only; wallet status/connect controls keep their own hooks.
+ */
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-white/5 glass">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="/" className="group flex items-center gap-3">
+    <header className="sticky top-0 z-40 bevel-out border-b border-blu-deep">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-3 py-1.5">
+        <Link href="/" className="group flex items-center gap-2">
           <img
             src="/logo.svg"
             alt="NanoCLI"
-            className="h-10 w-10 rounded-xl shadow-lg shadow-indigo-500/20 transition group-hover:shadow-indigo-500/40"
+            className="pixelated h-7 w-7 border border-blu-deep"
           />
-          <div className="flex items-center gap-2">
-            <span className="text-lg font-semibold tracking-tight text-white">
-              NanoCLI
-            </span>
-            <span className="inline-flex items-center rounded-full bg-indigo-500/10 px-2 py-0.5 text-[10px] font-medium text-indigo-300 ring-1 ring-inset ring-indigo-500/20">
-              BETA
-            </span>
-          </div>
+          <span className="font-pixel text-2xl leading-none text-blu-deep">
+            NanoCLI
+          </span>
+          <span className="bevel-in px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-widest text-blu-deep">
+            v0.1 beta
+          </span>
         </Link>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <NetworkBadge />
           <Balance />
           <ConnectButton />

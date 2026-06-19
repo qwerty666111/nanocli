@@ -11,12 +11,12 @@ export function Balance() {
   const formatted =
     !isLoading && balance
       ? `${parseFloat(balance.formatted).toFixed(4)} ${balance.symbol}`
-      : "...";
+      : "…";
 
   return (
-    <div className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-md sm:flex">
-      <span className="text-slate-400">Balance</span>
-      <span className="font-mono text-slate-100">{formatted}</span>
-    </div>
+    <span className="bevel-in hidden items-center gap-2 px-2 py-1 font-mono text-[11px] text-blu-deep sm:flex">
+      <span className="font-bold uppercase">Bal</span>
+      <span className="tabular-nums">{formatted}</span>
+    </span>
   );
 }

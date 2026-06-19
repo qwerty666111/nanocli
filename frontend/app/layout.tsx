@@ -1,15 +1,19 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { VT323, Share_Tech_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
-const inter = Inter({
+// Pixel display face for the OS chrome (title bars, headings, taskbar).
+const pixel = VT323({
+  weight: "400",
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-pixel",
   display: "swap",
 });
 
-const mono = JetBrains_Mono({
+// Clean monospace for body / data readouts.
+const mono = Share_Tech_Mono({
+  weight: "400",
   subsets: ["latin"],
   variable: "--font-mono",
   display: "swap",
@@ -28,7 +32,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#020617",
+  themeColor: "#1c6fd6",
 };
 
 export default function RootLayout({
@@ -37,8 +41,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${mono.variable}`}>
-      <body className="font-sans antialiased">
+    <html lang="en" className={`${pixel.variable} ${mono.variable}`}>
+      <body className="font-mono antialiased">
         <Providers>{children}</Providers>
       </body>
     </html>

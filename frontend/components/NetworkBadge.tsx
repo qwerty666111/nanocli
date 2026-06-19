@@ -12,29 +12,27 @@ export function NetworkBadge() {
 
   const isCorrect = chainId === arcTestnet.id;
 
-  const content = (
-    <>
-      <span className="relative flex h-2 w-2">
-        <span
-          className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-75 ${
-            isCorrect ? "bg-emerald-400" : "bg-rose-400"
-          }`}
-        />
-        <span
-          className={`relative inline-flex h-2 w-2 rounded-full ${
-            isCorrect ? "bg-emerald-400" : "bg-rose-400"
-          }`}
-        />
-      </span>
-      {isPending ? "Switching..." : isCorrect ? arcTestnet.name : "Switch network"}
-    </>
+  const dot = (
+    <span
+      aria-hidden="true"
+      className={`inline-block h-2.5 w-2.5 border border-blu-deep ${
+        isCorrect ? "bg-blu motion-safe:animate-blink" : "bg-white"
+      }`}
+    />
   );
+
+  const label = isPending
+    ? "Switching…"
+    : isCorrect
+    ? arcTestnet.name
+    : "Wrong net — switch";
 
   if (isCorrect) {
     return (
-      <div className="flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-300 backdrop-blur-md">
-        {content}
-      </div>
+      <span className="bevel-in hidden items-center gap-2 px-2 py-1 font-mono text-[11px] font-bold text-blu-deep sm:flex">
+        {dot}
+        {label}
+      </span>
     );
   }
 
@@ -42,10 +40,10 @@ export function NetworkBadge() {
     <button
       onClick={() => switchChain({ chainId: arcTestnet.id })}
       disabled={isPending}
-      className="flex items-center gap-2 rounded-full border border-rose-500/20 bg-rose-500/10 px-3 py-1.5 text-xs font-medium text-rose-300 backdrop-blur-md transition hover:bg-rose-500/20 disabled:opacity-60"
+      className="btn9 text-[11px]"
     >
-      {isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
-      {content}
+      {isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : dot}
+      {label}
     </button>
   );
 }

@@ -120,205 +120,207 @@ export function BatchTransfer({ contractAddress }: BatchTransferProps) {
   const isBusy = isWriting || (isConfirming && !!txHash);
 
   return (
-    <div className="relative overflow-hidden rounded-3xl glass-strong p-6 sm:p-8">
-      <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-cyan-500/10 blur-3xl" />
+    <div className="font-mono text-blu-deep">
+      {/* Program banner */}
+      <div className="mb-4 flex items-end justify-between gap-3 border-b-2 border-dotted border-blu-deep pb-3">
+        <div>
+          <h2 className="font-pixel text-3xl leading-none text-blu-deep">
+            BATCH.EXE
+          </h2>
+          <p className="mt-1 text-xs">
+            C:\NANOCLI&gt; distribute native USDC to many addresses in one call
+            <span className="cursor-block ml-0.5 align-baseline" aria-hidden="true" />
+          </p>
+        </div>
+        <span className="bevel-in shrink-0 px-2 py-1 text-[10px] font-bold uppercase">
+          Max {MAX_RECIPIENTS} rcpt
+        </span>
+      </div>
 
-      <div className="relative">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight text-white">
-              Send batch
-            </h2>
-            <p className="mt-1 text-sm text-slate-400">
-              Distribute native USDC to multiple addresses in one transaction.
-            </p>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Amount */}
+        <div>
+          <label className="block text-xs font-bold uppercase tracking-wide">
+            &gt; Amount per recipient
+          </label>
+          <div className="well mt-1.5 flex items-center px-2 focus-within:ring-1 focus-within:ring-blu">
+            <span className="px-1 text-xs font-bold text-blu">USDC</span>
+            <input
+              type="text"
+              inputMode="decimal"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="0.05"
+              className="w-full bg-transparent px-2 py-2 font-mono text-sm text-blu-deep placeholder:text-blu/40 focus:outline-none"
+            />
           </div>
-          <div className="hidden rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-300 sm:block">
-            Max {MAX_RECIPIENTS} recipients
+          {amountPerRecipient === 0n && amount !== "" && amount !== "0" && (
+            <p className="mt-1.5 text-xs font-bold text-blu">! Enter a valid amount.</p>
+          )}
+        </div>
+
+        {/* Recipients */}
+        <div>
+          <div className="flex items-center justify-between">
+            <label className="block text-xs font-bold uppercase tracking-wide">
+              &gt; Recipients
+            </label>
+            <div className="flex items-center gap-3">
+              <span className="bevel-in px-2 py-0.5 text-[10px] font-bold tabular-nums">
+                {parsed.unique.length} / {MAX_RECIPIENTS}
+              </span>
+              {recipientsRaw && (
+                <button
+                  type="button"
+                  onClick={clear}
+                  className="inline-flex items-center gap-1 text-[10px] font-bold uppercase underline decoration-dotted underline-offset-2 hover:text-blu"
+                >
+                  <X className="h-3 w-3" />
+                  Clear
+                </button>
+              )}
+            </div>
+          </div>
+          <textarea
+            value={recipientsRaw}
+            onChange={(e) => setRecipientsRaw(e.target.value)}
+            rows={8}
+            placeholder="0xAbc...123&#10;0xDef...456&#10;Paste one address per line, or separate with commas/spaces."
+            className="well mt-1.5 w-full px-3 py-2 font-mono text-sm text-blu-deep placeholder:text-blu/40 focus:outline-none focus:ring-1 focus:ring-blu"
+            spellCheck={false}
+          />
+          {parsed.invalid > 0 && (
+            <p className="mt-1.5 text-xs font-bold text-blu">
+              ! {parsed.invalid} invalid {parsed.invalid === 1 ? "entry" : "entries"} ignored.
+            </p>
+          )}
+          <p className="mt-1.5 text-[11px] text-blu">
+            * Duplicate addresses are automatically removed.
+          </p>
+        </div>
+
+        {/* Readout panel */}
+        <div className="bevel-in p-3 text-xs">
+          <div className="flex items-center justify-between">
+            <span className="uppercase">Recipients</span>
+            <span className="font-bold tabular-nums">{parsed.unique.length}</span>
+          </div>
+          <div className="mt-1.5 flex items-center justify-between">
+            <span className="uppercase">Amount each</span>
+            <span className="font-bold tabular-nums">
+              {amountPerRecipient > 0n ? formatEther(amountPerRecipient) : "0"} USDC
+            </span>
+          </div>
+          <div className="mt-2 flex items-center justify-between border-t border-dotted border-blu-deep pt-2">
+            <span className="font-bold uppercase">Total to send</span>
+            <span className="font-pixel text-xl leading-none text-blu-deep">
+              {totalFormatted} USDC
+            </span>
+          </div>
+          <div className="mt-1.5 flex items-center justify-between text-[11px]">
+            <span className="uppercase">Your balance</span>
+            <span className="tabular-nums">
+              {balance ? `${parseFloat(balance.formatted).toFixed(4)} ${balance.symbol}` : "—"}
+            </span>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-slate-300">
-              Amount per recipient
-            </label>
-            <div className="mt-2 flex items-center rounded-xl border border-white/10 bg-white/5 px-3 focus-within:border-indigo-500/50 focus-within:ring-1 focus-within:ring-indigo-500/30">
-              <span className="text-sm text-slate-500">USDC</span>
-              <input
-                type="text"
-                inputMode="decimal"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="0.05"
-                className="w-full bg-transparent px-3 py-3 text-sm text-white placeholder:text-slate-500 focus:outline-none"
-              />
-            </div>
-            {amountPerRecipient === 0n && amount !== "" && amount !== "0" && (
-              <p className="mt-2 text-xs text-rose-400">
-                Enter a valid amount.
-              </p>
-            )}
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between">
-              <label className="block text-sm font-medium text-slate-300">
-                Recipients
-              </label>
-              <div className="flex items-center gap-3">
-                <span className="text-xs text-slate-500">
-                  {parsed.unique.length} / {MAX_RECIPIENTS}
-                </span>
-                {recipientsRaw && (
-                  <button
-                    type="button"
-                    onClick={clear}
-                    className="inline-flex items-center gap-1 text-xs font-medium text-slate-400 transition hover:text-white"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                    Clear
-                  </button>
-                )}
-              </div>
-            </div>
-            <textarea
-              value={recipientsRaw}
-              onChange={(e) => setRecipientsRaw(e.target.value)}
-              rows={8}
-              placeholder="0xAbc...123&#10;0xDef...456&#10;Paste one address per line, or separate with commas/spaces."
-              className="mt-2 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 font-mono text-sm text-white placeholder:text-slate-600 focus:border-indigo-500/50 focus:outline-none focus:ring-1 focus:ring-indigo-500/30"
-              spellCheck={false}
-            />
-            {parsed.invalid > 0 && (
-              <p className="mt-2 text-xs text-rose-400">
-                {parsed.invalid} invalid {parsed.invalid === 1 ? "entry" : "entries"} ignored.
-              </p>
-            )}
-            <p className="mt-2 text-xs text-slate-500">
-              Duplicate addresses are automatically removed.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-400">Recipients</span>
-              <span className="font-medium text-white">{parsed.unique.length}</span>
-            </div>
-            <div className="mt-2 flex items-center justify-between text-sm">
-              <span className="text-slate-400">Amount each</span>
-              <span className="font-medium text-white">
-                {amountPerRecipient > 0n ? formatEther(amountPerRecipient) : "0"} USDC
-              </span>
-            </div>
-            <div className="mt-3 border-t border-white/10 pt-3 flex items-center justify-between">
-              <span className="text-slate-300">Total to send</span>
-              <span className="text-lg font-semibold text-white">
-                {totalFormatted} USDC
-              </span>
-            </div>
-            <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
-              <span>Your balance</span>
-              <span className="font-mono">
-                {balance ? `${parseFloat(balance.formatted).toFixed(4)} ${balance.symbol}` : "—"}
-              </span>
+        {/* Error dialog */}
+        {(simulateError || submissionError) && !isSuccess && (
+          <div className="bevel-out flex items-start gap-2 p-3 text-xs">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-blu" />
+            <div className="break-words">
+              {submissionError || simulateError?.message || "Transaction cannot be simulated."}
             </div>
           </div>
+        )}
 
-          {(simulateError || submissionError) && !isSuccess && (
-            <div className="flex items-start gap-3 rounded-xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-400" />
-              <div>
-                {submissionError || simulateError?.message || "Transaction cannot be simulated."}
-              </div>
+        {/* Success dialog */}
+        {isSuccess && txHash && (
+          <div className="bevel-out flex items-start gap-2 p-3 text-xs">
+            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-blu" />
+            <div>
+              <p className="font-bold uppercase">Transaction confirmed</p>
+              <a
+                href={`${arcTestnet.blockExplorers.default.url}/tx/${txHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1 inline-flex items-center gap-1 font-bold text-blu underline decoration-dotted underline-offset-2"
+              >
+                View on explorer
+                <ArrowUpRight className="h-3 w-3" />
+              </a>
             </div>
-          )}
+          </div>
+        )}
 
-          {isSuccess && txHash && (
-            <div className="flex items-start gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
-              <div>
-                <p className="font-medium">Transaction confirmed</p>
+        {/* Timeout warning */}
+        {receiptError && txHash && !isSuccess && (
+          <div className="bevel-out flex items-start gap-2 p-3 text-xs">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-blu" />
+            <div>
+              <p className="font-bold uppercase">Transaction is taking too long</p>
+              <p className="mt-1 break-words text-blu">{receiptError.message}</p>
+              <a
+                href={`${arcTestnet.blockExplorers.default.url}/tx/${txHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1.5 inline-flex items-center gap-1 font-bold text-blu underline decoration-dotted underline-offset-2"
+              >
+                Check status on explorer
+                <ArrowUpRight className="h-3 w-3" />
+              </a>
+            </div>
+          </div>
+        )}
+
+        {/* Busy / progress */}
+        {!isSuccess && isBusy && !submissionError && (
+          <div className="bevel-in p-3 text-xs">
+            <div className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin text-blu" />
+              {isWriting ? "Waiting for wallet signature…" : "Confirming transaction…"}
+            </div>
+            {txHash && !isWriting && (
+              <div className="mt-1.5 flex items-center gap-2 break-all text-[11px]">
+                <span className="truncate">{txHash}</span>
                 <a
                   href={`${arcTestnet.blockExplorers.default.url}/tx/${txHash}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-1 inline-flex items-center gap-1 text-emerald-300 underline underline-offset-2 transition hover:text-emerald-100"
+                  className="shrink-0 font-bold text-blu underline decoration-dotted underline-offset-2"
                 >
-                  View on explorer
-                  <ArrowUpRight className="h-3.5 w-3.5" />
+                  View
                 </a>
               </div>
-            </div>
-          )}
-
-          {receiptError && txHash && !isSuccess && (
-            <div className="flex items-start gap-3 rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
-              <div>
-                <p className="font-medium">Transaction is taking too long</p>
-                <p className="mt-1 text-xs text-amber-300/80">
-                  {receiptError.message}
-                </p>
-                <a
-                  href={`${arcTestnet.blockExplorers.default.url}/tx/${txHash}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-2 inline-flex items-center gap-1 text-amber-300 underline underline-offset-2 transition hover:text-amber-100"
-                >
-                  Check status on explorer
-                  <ArrowUpRight className="h-3.5 w-3.5" />
-                </a>
-              </div>
-            </div>
-          )}
-
-          {!isSuccess && isBusy && !submissionError && (
-            <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-300">
-              <div className="flex items-center gap-3">
-                <Loader2 className="h-4 w-4 animate-spin text-indigo-400" />
-                {isWriting ? "Waiting for wallet signature..." : "Confirming transaction..."}
-              </div>
-              {txHash && !isWriting && (
-                <div className="mt-2 flex items-center gap-2 font-mono text-xs">
-                  <span className="truncate">{txHash}</span>
-                  <a
-                    href={`${arcTestnet.blockExplorers.default.url}/tx/${txHash}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="shrink-0 text-indigo-300 underline underline-offset-2 transition hover:text-indigo-100"
-                  >
-                    View
-                  </a>
-                </div>
-              )}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={isBusy || !isValid}
-            className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:shadow-indigo-500/40 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:shadow-none"
-          >
-            {isBusy ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                {isWriting ? "Submitting..." : "Confirming..."}
-              </>
-            ) : !isConnected ? (
-              <>
-                <Wallet className="h-4 w-4" />
-                Connect wallet to send
-              </>
-            ) : (
-              <>
-                <Send className="h-4 w-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                Send batch
-              </>
             )}
-          </button>
-        </form>
-      </div>
+          </div>
+        )}
+
+        {/* RUN BATCH */}
+        <button
+          type="submit"
+          disabled={isBusy || !isValid}
+          className="btn9 btn9-primary group w-full py-3 text-base"
+        >
+          {isBusy ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              {isWriting ? "Submitting…" : "Confirming…"}
+            </>
+          ) : !isConnected ? (
+            <>
+              <Wallet className="h-4 w-4" />
+              Connect wallet to send batch
+            </>
+          ) : (
+            <>
+              <Send className="h-4 w-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              Run batch — Send batch
+            </>
+          )}
+        </button>
+      </form>
     </div>
   );
 }
