@@ -1,6 +1,6 @@
 import { createConfig, http } from "wagmi";
 import { injected } from "wagmi/connectors";
-import { defineChain } from "viem";
+import { defineChain, fallback } from "viem";
 
 export const arcTestnet = defineChain({
   id: 5042002,
@@ -12,10 +12,18 @@ export const arcTestnet = defineChain({
   },
   rpcUrls: {
     default: {
-      http: ["https://arc-testnet.drpc.org"],
+      http: [
+        "https://rpc.testnet.arc.network",
+        "https://rpc.drpc.testnet.arc.network",
+        "https://rpc.blockdaemon.testnet.arc.network",
+      ],
     },
     public: {
-      http: ["https://arc-testnet.drpc.org"],
+      http: [
+        "https://rpc.testnet.arc.network",
+        "https://rpc.drpc.testnet.arc.network",
+        "https://rpc.blockdaemon.testnet.arc.network",
+      ],
     },
   },
   blockExplorers: {
@@ -31,6 +39,10 @@ export const config = createConfig({
   chains: [arcTestnet],
   connectors: [injected()],
   transports: {
-    [arcTestnet.id]: http(),
+    [arcTestnet.id]: fallback([
+      http("https://rpc.testnet.arc.network"),
+      http("https://rpc.drpc.testnet.arc.network"),
+      http("https://rpc.blockdaemon.testnet.arc.network"),
+    ]),
   },
 });

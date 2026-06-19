@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import hre from "hardhat";
 import { parseEther, getAddress } from "viem";
+import { randomBytes } from "crypto";
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox-viem/network-helpers";
 
 describe("BatchPayment", function () {
@@ -104,6 +105,34 @@ describe("BatchPayment", function () {
 
       expect(aliceAfter - aliceBefore).to.equal(amountPerRecipient);
       expect(bobAfter - bobBefore).to.equal(amountPerRecipient);
+    });
+
+    it("distributes native value to 20 random recipients", async function () {
+      const { batchPayment, publicClient } = await loadFixture(deployFixture);
+      const recipients = Array.from({ length: 20 }, () =>
+        ("0x" + randomBytes(20).toString("hex")) as `0x${string}`
+      );
+      const amountPerRecipient = parseEther("0.05");
+      const total = amountPerRecipient * 20n;
+
+      const balancesBefore = await Promise.all(
+        recipients.map((address) => publicClient.getBalance({ address }))
+      );
+
+      const tx = await batchPayment.write.batchTransferNative(
+        [recipients, amountPerRecipient],
+        { value: total }
+      );
+      const receipt = await publicClient.waitForTransactionReceipt({ hash: tx });
+      expect(receipt.status).to.equal("success");
+
+      const balancesAfter = await Promise.all(
+        recipients.map((address) => publicClient.getBalance({ address }))
+      );
+
+      for (let i = 0; i < 20; i++) {
+        expect(balancesAfter[i] - balancesBefore[i]).to.equal(amountPerRecipient);
+      }
     });
   });
 

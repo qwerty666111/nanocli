@@ -1,63 +1,72 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { ConnectButton } from "@/components/ConnectButton";
-import { Balance } from "@/components/Balance";
-import { BatchForm } from "@/components/BatchForm";
+import { motion } from "framer-motion";
+import { Header } from "@/components/Header";
+import { GradientBackground } from "@/components/GradientBackground";
+import { ContractCard } from "@/components/ContractCard";
+import { BatchTransfer } from "@/components/BatchTransfer";
+import { Features } from "@/components/Features";
+import { AgentBanner } from "@/components/AgentBanner";
 
 export default function Home() {
-  const [deployedAddress, setDeployedAddress] = useState("");
+  const [contractAddress, setContractAddress] = useState<string>("");
 
   useEffect(() => {
     fetch("/api/deployed")
       .then((res) => res.json())
-      .then((data) => setDeployedAddress(data.contractAddress || ""))
-      .catch(() => setDeployedAddress(""));
+      .then((data) => setContractAddress(data.contractAddress || ""))
+      .catch(() => setContractAddress(""));
   }, []);
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-arc-600 text-white font-bold">
-              N
-            </div>
-            <h1 className="text-lg font-bold text-slate-900">NanoCLI</h1>
-          </div>
-          <div className="flex items-center gap-4">
-            <Balance />
-            <ConnectButton />
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen text-slate-100">
+      <GradientBackground />
+      <Header />
 
-      <section className="mx-auto max-w-5xl px-4 py-10">
-        <div className="mb-8 rounded-2xl bg-white p-8 shadow-sm border border-slate-200">
-          <div className="flex items-start justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-slate-900">
-                Batch USDC micro-transfers
-              </h2>
-              <p className="mt-2 text-slate-600">
-                Send $0.05 USDC to up to 100 recipients in a single transaction
-                on Arc Testnet.
-              </p>
-            </div>
-            <Link
-              href="/deploy"
-              className="rounded-lg bg-arc-100 px-4 py-2 text-sm font-semibold text-arc-700 hover:bg-arc-200 transition"
-            >
-              Deploy contract
-            </Link>
-          </div>
+      <main className="mx-auto max-w-6xl px-6 pb-24 pt-16">
+        <div className="text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
+              Batch payments on{" "}
+              <span className="text-gradient">Arc Testnet</span>
+            </h1>
+            <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-400">
+              Send USDC to up to 100 recipients in a single transaction. Verified
+              contract, wallet-only, no private keys ever touch the server.
+            </p>
+          </motion.div>
         </div>
 
-        <div className="rounded-2xl bg-white p-8 shadow-sm border border-slate-200">
-          <BatchForm initialContractAddress={deployedAddress} />
-        </div>
-      </section>
-    </main>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-12"
+        >
+          <AgentBanner />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-6 grid gap-6 lg:grid-cols-3"
+        >
+          <div className="lg:col-span-2">
+            <BatchTransfer contractAddress={contractAddress} />
+          </div>
+
+          <div className="space-y-6">
+            <ContractCard address={contractAddress} />
+            <Features />
+          </div>
+        </motion.div>
+      </main>
+    </div>
   );
 }
